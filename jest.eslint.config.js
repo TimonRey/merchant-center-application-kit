@@ -5,6 +5,7 @@ module.exports = {
     '<rootDir>/*.js',
     '<rootDir>/packages/**/*.js',
     '<rootDir>/scripts/*.js',
+    '<rootDir>/website/**/*.js',
   ],
   watchPlugins: ['jest-plugin-filename', 'jest-watch-master'],
 };

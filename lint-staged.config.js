@@ -24,14 +24,14 @@ const lintCss = [
 ];
 
 module.exports = {
-  '{.github,packages}/**/*.md': formatMd,
+  '{.github,packages,website}/**/*.md': formatMd,
   '*.md': formatMd,
 
-  'packages/**/*.yaml': formatYaml,
+  '{packages,website}/**/*.yaml': formatYaml,
   '*.yaml': formatYaml,
 
-  '{packages,scripts}/**/*.js': lintJs,
+  '{packages,scripts,website}/**/*.js': lintJs,
   '*.js': lintJs,
 
-  'packages/**/*.css': lintCss,
+  '{packages,website}/**/*.css': lintCss,
 };
