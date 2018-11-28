@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import Select from 'react-select';
+import Select from 'react-select-v1';
 import { WorldIcon } from '@commercetools-frontend/ui-kit';
 import styles from './locale-switcher.mod.css';
 

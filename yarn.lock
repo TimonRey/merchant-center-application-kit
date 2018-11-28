@@ -12517,7 +12517,7 @@ react-router@4.4.0-beta.6, react-router@^4.4.0-beta.6:
     tiny-invariant "^1.0.2"
     tiny-warning "^1.0.0"
 
-react-select@1.2.1:
+"react-select-v1@npm:react-select@1.2.1", react-select@1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/react-select/-/react-select-1.2.1.tgz#a2fe58a569eb14dcaa6543816260b97e538120d1"
   integrity sha512-vaCgT2bEl+uTyE/uKOEgzE5Dc/wLtzhnBvoHCeuLoJWc4WuadN6WQDhoL42DW+TziniZK2Gaqe/wUXydI3NSaQ==
@@ -12526,7 +12526,7 @@ react-select@1.2.1:
     prop-types "^15.5.8"
     react-input-autosize "^2.1.2"
 
-react-select@2.1.2:
+react-select@2.1.2, react-select@^2.1.2:
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/react-select/-/react-select-2.1.2.tgz#7a3e4c2b9efcd8c44ae7cf6ebb8b060ef69c513c"
   integrity sha512-+ceiz2KwIeEBxT/PgAXBIGohLXfa9YhkfwFSHMlqpTL55JYvjhgkGoBxoasGcMGeQ49J3RhAKZDD+x6ZHKmj6g==
