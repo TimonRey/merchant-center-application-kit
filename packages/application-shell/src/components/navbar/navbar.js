@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import fetch from 'unfetch';
 import isNil from 'lodash/isNil';
+import kebabCase from 'lodash/kebabCase';
 import { FormattedMessage } from 'react-intl';
 import { NavLink, matchPath, withRouter } from 'react-router-dom';
 import { graphql } from 'react-apollo';
@@ -8,25 +10,8 @@ import { ToggleFeature, injectFeatureToggle } from '@flopflip/react-broadcast';
 import { compose, withProps } from 'recompose';
 import classnames from 'classnames';
 import { oneLineTrim } from 'common-tags';
-import {
-  BackIcon,
-  TreeStructureIcon,
-  UserFilledIcon,
-  SpeedometerIcon,
-  TagMultiIcon,
-  CartIcon,
-  BoxIcon,
-  GearIcon,
-  SupportIcon,
-  WorldIcon,
-  HeartIcon,
-  PaperclipIcon,
-  PluginIcon,
-  RocketIcon,
-  StarIcon,
-  ConnectedSquareIcon,
-} from '@commercetools-frontend/ui-kit';
-import MissingImageSvg from '@commercetools-frontend/assets/images/image__missing_image.svg';
+import { BackIcon } from '@commercetools-frontend/ui-kit';
+import ImageBrokenSvg from '@commercetools-frontend/assets/images/image__broken.svg';
 import * as storage from '@commercetools-frontend/storage';
 import {
   GRAPHQL_TARGETS,
@@ -55,58 +40,52 @@ import messages from './messages';
 </DataMenu>
 */
 
-// This component receives the icon name as a string
-// and statically maps it to the related icon component.
-// We need to do this to avoid importing ALL icons and pick
-// the icon dynamically.
-// https://github.com/commercetools/ui-kit/pull/270
-// TODO: find a better solution once we implement
-// https://github.com/commercetools/merchant-center-application-kit/issues/37
-// which moves the static navbar config out of the AppShell,
-// in which case we don't have a clue on the icons used.
-// A possible solution to that would be to import the SVG using
-// a `<img src>`, given that the SVG are available from a public URL.
-export const IconSwitcher = ({ iconName, ...iconProps }) => {
-  switch (iconName) {
-    // Application icons
-    case 'TreeStructureIcon':
-      return <TreeStructureIcon {...iconProps} />;
-    case 'UserFilledIcon':
-      return <UserFilledIcon {...iconProps} />;
-    case 'SpeedometerIcon':
-      return <SpeedometerIcon {...iconProps} />;
-    case 'TagMultiIcon':
-      return <TagMultiIcon {...iconProps} />;
-    case 'CartIcon':
-      return <CartIcon {...iconProps} />;
-    case 'BoxIcon':
-      return <BoxIcon {...iconProps} />;
-    case 'GearIcon':
-      return <GearIcon {...iconProps} />;
-    case 'SupportIcon':
-      return <SupportIcon {...iconProps} />;
-    // Custom application icons set
-    case 'HeartIcon':
-      return <HeartIcon {...iconProps} />;
-    case 'PaperclipIcon':
-      return <PaperclipIcon {...iconProps} />;
-    case 'PluginIcon':
-      return <PluginIcon {...iconProps} />;
-    case 'RocketIcon':
-      return <RocketIcon {...iconProps} />;
-    case 'StarIcon':
-      return <StarIcon {...iconProps} />;
-    case 'ConnectedSquareIcon':
-      return <ConnectedSquareIcon {...iconProps} />;
-    // For backwards compatibility
-    case 'WorldIcon':
-      return <WorldIcon {...iconProps} />;
-    default:
-      return <img src={MissingImageSvg} />;
+class SvgIcon extends React.Component {
+  static displayName = 'SvgIcon';
+  static propTypes = {
+    url: PropTypes.string.isRequired,
+    theme: PropTypes.oneOf(['white', 'green-light']).isRequired,
+  };
+  ref = React.createRef();
+  placeholder = React.createRef();
+  state = { hasError: false };
+  componentDidMount() {
+    fetch(this.props.url)
+      .then(response => response.text())
+      .then(data => {
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(data, 'text/xml');
+        // Get the SVG tag, ignore the rest
+        const svg = xmlDoc.getElementsByTagName('svg')[0];
+        this.ref.current.replaceChild(svg, this.placeholder.current);
+      })
+      .catch(() => {
+        this.setState({ hasError: true });
+      });
   }
-};
-IconSwitcher.displayName = 'IconSwitcher';
-IconSwitcher.propTypes = { iconName: PropTypes.string.isRequired };
+  render() {
+    return (
+      <div
+        ref={this.ref}
+        className={classnames(
+          styles['svg-icon'],
+          styles[`theme-${this.props.theme}`]
+        )}
+      >
+        {this.state.hasError ? (
+          <img src={ImageBrokenSvg} />
+        ) : (
+          <div
+            ref={this.placeholder}
+            className={styles['loading-dot-container']}
+          >
+            <LoadingPlaceholder shape="dot" size="m" />
+          </div>
+        )}
+      </div>
+    );
+  }
+}
 
 export const MenuExpander = props => (
   <li
@@ -511,9 +490,10 @@ export class DataMenu extends React.PureComponent {
             >
               <div className={styles['item-icon-text']}>
                 <div className={styles.icon}>
-                  <IconSwitcher
-                    iconName={menu.icon}
-                    size="scale"
+                  <SvgIcon
+                    url={`http://localhost:8080/iconss/${kebabCase(
+                      menu.icon
+                    ).replace('-icon', '')}.react.svg`}
                     theme={getIconTheme(
                       menu,
                       isActive || this.isMainMenuRouteActive(menu.uriPath)

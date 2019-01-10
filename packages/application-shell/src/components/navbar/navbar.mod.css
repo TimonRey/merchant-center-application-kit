@@ -332,3 +332,22 @@
 .fixed-menu {
   flex: 0 0 0;
 }
+
+.svg-icon {
+  width: var(--icon-size);
+  height: var(--icon-size);
+}
+.svg-icon > img,
+.svg-icon > svg:not(:root) {
+  width: 100%;
+  height: auto;
+}
+.theme-white * {
+  fill: var(--color-white);
+}
+.theme-green-light * {
+  fill: var(--color-green-40);
+}
+.theme-grey * {
+  fill: var(--color-gray-60);
+}
