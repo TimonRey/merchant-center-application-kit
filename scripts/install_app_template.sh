@@ -31,14 +31,16 @@ node "$REPO_BINARIES/create-mc-app" \
   --skip-install \
   "$TEST_APP_NAME"
 
+pushd "$HOME/$TEST_APP_NAME"
+
 echo "==> Installing packages from tarballs"
-yarn --cwd "$TEST_APP_NAME" add "${packageTars[@]}"
+npm install --no-save "${packageTars[@]}"
 
 echo "==> Installing application dependencies"
-yarn --cwd "$TEST_APP_NAME" install
+npm install
 
 echo "==> Running tests for template $TEMPLATE"
-yarn --cwd "$TEST_APP_NAME" test
+yarn test
 
 echo "==> Running the production build of template $TEMPLATE"
-yarn --cwd "$TEST_APP_NAME" build
+yarn build
