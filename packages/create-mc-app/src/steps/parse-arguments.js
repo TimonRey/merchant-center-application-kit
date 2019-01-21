@@ -11,7 +11,10 @@ const { isSemVer } = require('../utils');
 const hintOutdatedVersion = require('./hint-outdated-version');
 
 module.exports = function parseArguments() {
-  const flags = mri(process.argv.slice(2), { alias: { help: ['h'] } });
+  const flags = mri(process.argv.slice(2), {
+    alias: { help: ['h'] },
+    boolean: ['skip-install'],
+  });
   const commands = flags._;
 
   if (commands.length === 0 || (flags.help && commands.length === 0)) {
@@ -25,6 +28,7 @@ module.exports = function parseArguments() {
     --template <name>                (optional) The name of the template to install [default "starter"]
                                      Available options: ["starter"]
     --template-version <version>     (optional) The version of the template to install [default "master"]
+    --skip-install                   (optional) To skip the installation step after cloning the template [default "false"]
     `);
     process.exit(0);
   }
@@ -47,6 +51,7 @@ module.exports = function parseArguments() {
     isSemVer(tagOrBranchVersion) && !tagOrBranchVersion.startsWith('v')
       ? `v${tagOrBranchVersion}`
       : tagOrBranchVersion;
+  const shouldSkipInstall = Boolean(flags['skip-install']);
 
   // Validate options
   throwIfProjectDirectoryExists(projectDirectoryName, projectDirectoryPath);
@@ -57,5 +62,6 @@ module.exports = function parseArguments() {
     projectDirectoryPath,
     templateName,
     tagOrBranchVersion,
+    shouldSkipInstall,
   };
 };

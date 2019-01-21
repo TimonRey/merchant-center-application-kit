@@ -2,7 +2,17 @@ const execSync = require('child_process').execSync;
 const logger = require('../logger');
 const { shouldUseYarn } = require('../utils');
 
-module.exports = function installDependencies({ projectDirectoryPath }) {
+module.exports = function installDependencies({
+  projectDirectoryPath,
+  shouldSkipInstall,
+}) {
+  if (shouldSkipInstall) {
+    logger.info(
+      `🤖 Skipping dependencies installation because of "--skip-install" flag...`
+    );
+    return;
+  }
+
   logger.info(`🤖 Installing dependencies...`);
 
   const useYarn = shouldUseYarn();
