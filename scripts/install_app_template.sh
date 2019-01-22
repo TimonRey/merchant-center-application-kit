@@ -31,8 +31,6 @@ node "$REPO_BINARIES/create-mc-app" \
   --skip-install \
   "$TEST_APP_NAME"
 
-pushd "$HOME/$TEST_APP_NAME"
-
 echo "==> Installing linked packages"
 for pkgName in "${packageNames[@]}"; do
   yarn --cwd "$TEST_APP_NAME" link "$pkgName"
