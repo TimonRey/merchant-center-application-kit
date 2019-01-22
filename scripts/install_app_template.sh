@@ -13,13 +13,13 @@ TEMPLATE_VERSION="${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}"
 TEST_APP_NAME=test-install-app-starter
 REPO_BINARIES=$(yarn bin)
 
-packageTars=()
+packageNames=()
 
-echo "==> Packing all packages"
-for pkg in packages/*; do
-  tarName="$(basename "$pkg").tgz"
-  yarn --cwd "$pkg" pack --filename "$tarName"
-  packageTars=("${packageTars[@]}" "$(pwd)/${tarName}")
+echo "==> Linking all packages"
+for pkgDir in packages/*; do
+  pkgName=$(basename "$pkgDir")
+  yarn --cwd "$pkgDir" link
+  packageNames=("${packageNames[@]}" "@commercetools-frontend/$pkgName")
 done
 
 pushd "$HOME"
@@ -33,14 +33,16 @@ node "$REPO_BINARIES/create-mc-app" \
 
 pushd "$HOME/$TEST_APP_NAME"
 
-echo "==> Installing packages from tarballs"
-npm install --no-save "${packageTars[@]}"
+echo "==> Installing linked packages"
+for pkgName in "${packageNames[@]}"; do
+  yarn --cwd "$TEST_APP_NAME" link "$pkgName"
+done
 
 echo "==> Installing application dependencies"
-npm install
+yarn --cwd "$TEST_APP_NAME" install
 
 echo "==> Running tests for template $TEMPLATE"
-yarn test
+yarn --cwd "$TEST_APP_NAME" test
 
 echo "==> Running the production build of template $TEMPLATE"
-yarn build
+yarn --cwd "$TEST_APP_NAME" build
